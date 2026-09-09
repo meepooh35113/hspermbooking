@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองคิว - HS Perm Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- นำเข้า Library สำหรับสร้าง QR Code (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --gold-primary: #C5A059;
+            --gold-hover: #A68340;     
+            --white-bg: #FFFFFF;
+            --text-dark: #2C2C2C;
+            --text-light: #666666;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-weight: 300;
+            color: var(--text-dark);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.95)), url('IMG_7441.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .booking-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            margin: 40px 0;
+        }
+
+        .shop-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px auto;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+            display: block;
+            background-color: #fff;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            background: linear-gradient(180deg, #E4C583 0%, #C5A059 45%, #8F6F32 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: var(--gold-primary);
+            text-shadow: 0 2px 3px rgba(143, 111, 50, 0.25);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+            font-weight: 300;
+        }
+
+        .shop-details {
+            font-size: 0.92rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            line-height: 1.5;
+        }
+        
+        .shop-details span {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .shop-details span:last-child { margin-bottom: 0; }
+        
+        .shop-details i {
+            color: var(--gold-primary);
+            font-style: normal;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        
+        .shop-details a {
+            color: var(--text-dark);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--gold-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .shop-details a:hover {
+            color: var(--gold-hover);
+            border-bottom: 1px solid var(--gold-hover);
+        }
+
+        .shop-details a.phone-link {
+            color: #1E88E5;
+            border-bottom: 1px dashed #1E88E5;
+            font-weight: 500;
+        }
+
+        .shop-details a.phone-link:hover {
+            color: #1565C0;
+            border-bottom: 1px solid #1565C0;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+            color: var(--text-dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 5px;
+            border: none;
+            border-bottom: 1.5px solid #D1D1D1;
+            border-radius: 0;
+            font-family: 'Sarabun', sans-serif;
+            font-weight: 400;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            background-color: transparent;
+            transition: all 0.4s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: "▼";
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-bottom: 1.5px solid var(--gold-primary);
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--gold-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- สไตล์ Modal และ Loading --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--white-bg);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* โลโก้ในหน้า Modal / หน้าโหลด */
+        .modal-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px auto;
+            border: 2px solid var(--gold-primary);
+            background-color: #fff;
+            display: block;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .modal-content h3 {
+            font-family: 'Sarabun', sans-serif;
+            color: var(--gold-primary);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .modal-content p {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        #qrcode img {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 10px;
+            background: white;
+            border: 1px solid #E0E0E0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-light);
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover { color: var(--text-dark); }
+
+        /* Animation โลโก้เต้นตอนโหลดเข้า LINE */
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(197, 160, 89, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
+        .loading-logo {
+            width: 120px;
+            height: 120px;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="booking-container">
+        <!-- Changed to IMG_7441.jpg -->
+        <img src="IMG_7441.jpg" alt="HS Perm Center Logo" class="shop-logo" onerror="this.src='https://via.placeholder.com/100/FFFFFF/C5A059?text=Logo'">
+        
+        <h1>HS Perm Center</h1>
+        <p class="subtitle">ระบบจองคิวรับบริการล่วงหน้า</p>
+        
+        <div class="shop-details">
+            <span><i>📍</i> ที่อยู่: Hs perm center BigC สุขาภิบาล5</span>
+            <span><i>🗺️</i> <a href="https://share.google/isg7hAclVDfuefSrgP" target="_blank">เปิดแผนที่ Google Maps</a></span>
+            <span><i>📞</i> สอบถามรายละเอียดเพิ่มเติม โทร <a href="tel:0219144828" class="phone-link">02 191 4828</a></span>
+            <span><i>⏰</i> เปิดบริการ: 10:00 น. - 20:00 น.</span>
+        </div>
+
+        <form id="bookingForm">
+            <div class="form-group">
+                <label for="name">ชื่อเล่น</label>
+                <input type="text" id="name" name="name" placeholder="กรุณากรอกชื่อเล่นของคุณ" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">เบอร์โทรศัพท์</label>
+                <input type="tel" id="phone" name="phone" placeholder="08X-XXX-XXXX" required>
+            </div>
+
+            <div class="form-group">
+                <label for="service">บริการที่ต้องการ</label>
+                <div class="select-wrapper">
+                    <select id="service" name="service" required>
+                        <option value="" disabled selected>-- กรุณาเลือกบริการ --</option>
+                        <option value="ตัดผม (Haircut)">ตัดผม (Haircut)</option>
+                        <option value="สระไดร์ (Wash & Blow-dry)">สระไดร์ (Wash & Blow-dry)</option>
+                        <option value="ทำสีผม (Hair Color)">ทำสีผม (Hair Color)</option>
+                        <option value="ดัดผม (Perm)">ดัดผม (Perm)</option>
+                        <option value="ยืดผม (Rebonding/Straightening)">ยืดผม (Rebonding/Straightening)</option>
+                        <option value="ทรีทเม้นท์บำรุงผม (Hair Treatment)">ทรีทเม้นท์บำรุงผม (Hair Treatment)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="stylist">เลือกช่างผู้เชี่ยวชาญ (Stylist)</label>
+                <div class="select-wrapper">
+                    <select id="stylist" name="stylist" required>
+                        <option value="" disabled selected>-- กรุณาเลือกช่าง --</option>
+                        <option value="ช่าง A (Senior Stylist)">ช่าง A (Senior Stylist)</option>
+                        <option value="ช่าง B (Stylist)">ช่าง B (Stylist)</option>
+                        <option value="ช่าง C (Stylist)">ช่าง C (Stylist)</option>
+                        <option value="ไม่ระบุ (ช่างท่านใดก็ได้)">ไม่ระบุ (ช่างท่านใดก็ได้)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="date">วันที่ต้องการรับบริการ</label>
+                <input type="date" id="date" name="date" required min="">
+
+            </div>
+            
+            <div class="form-group">
+                <label for="time">รอบเวลา (Time Slot)</label>
+                <div class="select-wrapper">
+                    <select id="time" name="time" required>
+                        <option value="" disabled selected>-- กรุณาเลือกรอบเวลา --</option>
+                        <option value="10:00 - 12:00 น.">10:00 - 12:00 น.</option>
+                        <option value="12:00 - 14:00 น.">12:00 - 14:00 น.</option>
+                        <option value="14:00 - 16:00 น.">14:00 - 16:00 น.</option>
+                        <option value="16:00 - 18:00 น.">16:00 - 18:00 น.</option>
+                        <option value="18:00 - 20:00 น.">18:00 - 20:00 น.</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit">ยืนยันการจองผ่าน LINE</button>
+        </form>
+    </div>
+
+    <!-- Modal QR Code สำหรับ Desktop (มีโลโก้) -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModal">&times;</button>
+            <!-- Changed to IMG_7441.jpg -->
+            <img src="IMG_7441.jpg" alt="Logo" class="modal-logo" onerror="this.src='https://via.placeholder.com/80/FFFFFF/C5A059?text=Logo'">
+            <h3>ยืนยันการจอง</h3>
+            <p>แสกน QR นี้ด้วยมือถือเพื่อเปิด LINE<br>และส่งข้อมูลจองคิวให้ทางร้าน</p>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
+    <!-- Modal Loading สำหรับ Mobile (โชว์โลโก้เด้งๆ ก่อนเข้า LINE) -->
+    <div class="modal-overlay" id="mobileLoading">
+        <div class="modal-content" style="background: transparent; box-shadow: none; border: none;">
+            <!-- Changed to IMG_7441.jpg -->
+            <img src="IMG_7441.jpg" alt="Logo" class="modal-logo loading-logo" onerror="this.src='https://via.placeholder.com/120/FFFFFF/C5A059?text=Logo'">
+            <h3 style="color: white; margin-top: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">กำลังเปิดแอป LINE...</h3>
+        </div>
+    </div>
+
+    <!-- Script ควบคุม -->
+    <script>
+        const LINE_OA_ID = "@438igyey"; 
+        
+        const form = document.getElementById('bookingForm');
+        const qrModal = document.getElementById('qrModal');
+        const mobileLoading = document.getElementById('mobileLoading');
+        const closeModal = document.getElementById('closeModal');
+        const qrcodeContainer = document.getElementById('qrcode');
+        const dateInput = document.getElementById('date');
+
+        // ปิดกั้นการเลือกวันที่ที่ผ่านมาแล้ว
+        function getTodayString() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        const todayStr = getTodayString();
+        dateInput.setAttribute('min', todayStr);
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const service = document.getElementById('service').value;
+            const stylist = document.getElementById('stylist').value;
+            const rawDate = document.getElementById('date').value; 
+            const time = document.getElementById('time').value;
+
+            // ตรวจสอบอีกครั้งกันกรณีมีการแก้ไข min ผ่าน devtools
+            if (rawDate < todayStr) {
+                alert('กรุณาเลือกวันที่ตั้งแต่วันนี้เป็นต้นไป');
+                return;
+            }
+
+            const dateParts = rawDate.split('-');
+            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+            const message = `📋 รายการจองคิวใหม่
+
+คุณ ${name} ต้องการจองคิวรับบริการ
+
+ชื่อ: ${name}
+เบอร์โทร: ${phone}
+บริการ: ${service}
+ช่างผู้เชี่ยวชาญ: ${stylist}
+วันที่: ${formattedDate}
+เวลา: ${time}`;
+            const encodedMessage = encodeURIComponent(message);
+            const lineUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodedMessage}`;
+
+            if (window.innerWidth > 768) {
+                // สำหรับจอคอม: โชว์ QR Code พร้อมโลโก้
+                qrcodeContainer.innerHTML = "";
+                new QRCode(qrcodeContainer, {
+                    text: lineUrl,
+                    width: 180,
+                    height: 180,
+                    colorDark : "#2C2C2C",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                qrModal.classList.add('active');
+            } else {
+                // สำหรับมือถือ: โชว์โลโก้โหลดดิ้ง 1.5 วิ แล้วค่อยเด้งไป LINE
+                mobileLoading.classList.add('active');
+                setTimeout(() => {
+                    window.location.href = lineUrl;
+                    setTimeout(() => {
+                        mobileLoading.classList.remove('active');
+                    }, 2000);
+                }, 1500);
+            }
+        });
+
+        closeModal.addEventListener('click', () => {
+            qrModal.classList.remove('active');
+        });
+        
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) {
+                qrModal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
